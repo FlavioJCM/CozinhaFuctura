@@ -1,0 +1,114 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/templatePrincipal.xhtml">
+
+	<ui:define name="cabecalho">
+		<p:graphicImage url="/resources/img/CozinhaCabecalho.jpg" width="100%"
+			height="75px" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<p:messages id="messages" showDetail="true" closable="true">
+			<p:autoUpdate />
+		</p:messages>
+
+		<p:tabView>
+			<!-- TAB FEED DE RECEITA -->
+			<p:tab title="Feed de Receitas">
+				<p:panelGrid style="width:1200px; ">
+					<p:row>
+						<p:column>
+
+							<!-- Nome do chef -->
+							<p:outputLabel value="Nome do Chef: " />
+							<p:inputText size="52"
+								value="#{FeedReceitaBean.chef.nome}"
+								style="text-transform:uppercase" />							
+								
+							<!-- Cpf pesquisa -->
+							<p:outputLabel value=" " />
+							<p:outputLabel value="CPF: " />
+							<p:inputMask size="11" value="#{FeedReceitaBean.chef.cpf}"
+								mask="999.999.999-99" />
+
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="width:400px">
+							<!-- Código da receita -->
+							<p:outputLabel value="Código da Receita: " />
+							<p:inputText size="4"
+								value="#{FeedReceitaBean.receita.codigo}" />	
+						
+						<!-- Nome da receita -->
+							<p:outputLabel value="Nome da receita: " />
+							<p:inputText size="52"
+								value="#{FeedReceitaBean.receita.nome}"
+								style="text-transform:uppercase" />				
+						
+						<!-- Preço do chef -->
+							<p:outputLabel value="Preço da receita: " />
+							<p:inputText size="4"
+								value="#{FeedReceitaBean.receita.preco}" />			
+												
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+				<h:panelGrid style="width:1200px; ">
+					<p:row>
+						<p:commandButton value="Pesquisar" update="@form"
+							actionListener="#{FeedReceitaBean.pesquisa}" />
+
+						<p:button value="" disabled="true" />
+
+						<p:commandButton value="Limpar" update="@form"
+							action="#{FeedReceitaBean.limparCampos}" />
+					</p:row>					
+				</h:panelGrid>
+				
+				<p:dataTable value="#{FeedReceitaBean.receitas}" var="r" rows="30"
+						paginator="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						emptyMessage="Nenhum Registro Encontrado">
+						
+						<p:column headerText="NOME DO CHEF" width="50" sortBy="#{r.chef.nome}">
+							<p:outputLabel value="#{r.chef.nome}" />
+						</p:column>	
+						
+						<p:column headerText="CPF DO CHEF" width="10" sortBy="#{r.chef.cpf}" style="text-align: center">
+							<p:outputLabel value="#{r.chef.cpf}" />
+						</p:column>
+						
+						<p:column headerText="CÓDIGO DA RECEITA" width="5" sortBy="#{r.codigo}" style="text-align: center">
+							<p:outputLabel value="#{r.codigo}" />
+						</p:column>						
+
+						<p:column headerText="NOME DA RECEITA" width="50" sortBy="#{r.nome}">
+							<p:outputLabel value="#{r.nome}" />
+						</p:column>
+
+						<p:column headerText="PREÇO DA RECEITA" width="5" sortBy="#{r.preco}" style="text-align: center">
+							<p:outputLabel value="#{r.preco}" />
+						</p:column>
+
+						<p:column headerText="AÇÃO" width="5" style="text-align: center">						
+
+							<h:commandButton value="Detalhes"
+								action="#{ReceitaBean.prepararDetalhes}">
+
+								<f:setPropertyActionListener
+								target="#{ReceitaBean.codigoReceitaEditar}" value="#{r.codigo}" />
+							</h:commandButton>
+						</p:column>						
+					</p:dataTable>				
+			</p:tab>				
+			
+		</p:tabView>
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,79 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/templatePrincipal.xhtml">
+
+	<ui:define name="cabecalho">
+		<p:graphicImage url="/resources/img/CozinhaCabecalho.jpg" width="100%"
+			height="75px" />
+	</ui:define>
+
+	<ui:define name="menu">
+
+		<p:messages id="messages" showDetail="false" closable="false">
+			<p:autoUpdate />
+		</p:messages>
+
+		<p:panelGrid style="width:100px;">
+		</p:panelGrid>
+
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<p:messages id="messagesConteudo" showDetail="true" closable="true">
+			<p:autoUpdate />
+		</p:messages>
+
+		<p:tabView>
+			<!-- TAB DE CADASTRO DE CHEF -->
+			<p:tab title="Cadastrar Chef">
+				<h:panelGrid style="width:1200px; ">
+
+					<!-- NOME DO CHEF -->
+					<p:outputLabel value="" />
+					<p:outputLabel value="Nome: " />
+					<p:inputText value="#{ChefBean.chef.nome}"
+						style="text-transform:uppercase" size="50" />
+
+					<!-- CPF DO CHEF -->
+					<p:outputLabel value=" " />
+					<p:outputLabel value="CPF: " />
+					<p:inputMask size="11" value="#{ChefBean.chef.cpf}"
+						mask="999.999.999-99" />
+
+					<!-- SENHA DO CHEF -->
+					<!-- Senha Inserir -->
+					<p:outputLabel value=" " />
+					<p:outputLabel value="Senha: " />
+					<p:password size="20" id="senhaInserir"
+						value="#{ChefBean.chef.senha}" feedback="true"
+						promptLabel="digite a senha" weakLabel="senha fraca"
+						goodLabel="senha média" strongLabel="senha forte" />
+
+					<!-- Senha Inserir confirmar -->
+					<p:outputLabel value=" " />
+					<p:outputLabel value="Repita a senha: " />
+					<p:password size="20" id="senhaConfirmar"
+						value="#{ChefBean.senhaConfirmar}" feedback="true"
+						promptLabel="repita a senha" weakLabel="senha fraca"
+						goodLabel="senha média" strongLabel="senha forte" />
+				</h:panelGrid>
+				<br />
+				<p:row>
+					<p:commandButton value="Cadastrar" update="@form"
+						action="#{ChefBean.inserir}" />
+					<p:button value="" disabled="true" />
+
+					<p:commandButton value="Voltar" update="@form"
+						action="#{ChefBean.voltarParaLogin}" />
+				</p:row>
+			</p:tab>
+		</p:tabView>
+
+	</ui:define>
+</ui:composition>
+</html>

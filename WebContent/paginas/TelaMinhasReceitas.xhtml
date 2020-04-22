@@ -1,0 +1,201 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/templatePrincipal.xhtml">
+
+	<ui:define name="cabecalho">
+		<p:graphicImage url="/resources/img/CozinhaCabecalho.jpg" width="100%"
+			height="75px" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<p:messages id="messages" showDetail="true" closable="true">
+			<p:autoUpdate />
+		</p:messages>
+
+		<p:tabView>
+			<!-- TAB MINHAS DE RECEITA -->
+			<p:tab title="Minhas Receitas" action="#{ReceitaBean.pesquisa}">
+				<p:panelGrid style="width:1200px; ">
+
+					<p:row>
+						<p:column>
+
+							<!-- Nome do chef -->
+							<p:outputLabel value="Nome do Chef: " />
+							<p:inputText size="52" value="#{ReceitaBean.chef.nome}"
+								style="text-transform:uppercase" disabled="true" />
+
+							<!-- Cpf do chef -->
+							<p:outputLabel value=" " />
+							<p:outputLabel value="CPF: " />
+							<p:inputMask size="11" value="#{ReceitaBean.chef.cpf}"
+								mask="999.999.999-99" disabled="true" />
+
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column colspan="2" style="width:400px">
+							<!-- Código da receita -->
+							<p:outputLabel value="Código da Receita: " />
+							<p:inputText size="4" value="#{ReceitaBean.receita.codigo}" />
+
+							<!-- Nome da receita -->
+							<p:outputLabel value="Nome da receita: " />
+							<p:inputText size="52" value="#{ReceitaBean.receita.nome}"
+								style="text-transform:uppercase" />
+
+							<!-- Preço da receita -->
+							<p:outputLabel value="Preço da receita: " />
+							<p:inputText size="4" value="#{ReceitaBean.receita.preco}" />
+
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+				<h:panelGrid style="width:1200px; ">
+					<p:row>
+						<p:commandButton value="Pesquisar" update="@form"
+							actionListener="#{ReceitaBean.pesquisa}" />
+
+						<p:button value="" disabled="true" />
+
+						<p:commandButton value="Limpar" update="@form"
+							action="#{ReceitaBean.limparCampos}" />
+					</p:row>
+				</h:panelGrid>
+
+				<p:dataTable value="#{ReceitaBean.listaReceitas}" var="r" rows="30"
+					paginator="true"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					emptyMessage="Nenhum Registro Encontrado">
+
+					<p:column headerText="CÓDIGO DA RECEITA" width="5"
+						sortBy="#{r.codigo}" style="text-align: center">
+						<p:outputLabel value="#{r.codigo}" />
+					</p:column>
+
+					<p:column headerText="NOME DA RECEITA" width="50"
+						sortBy="#{r.nome}">
+						<p:outputLabel value="#{r.nome}" />
+					</p:column>
+
+					<p:column headerText="PREÇO DA RECEITA" width="5"
+						sortBy="#{r.preco}" style="text-align: center">
+						<p:outputLabel value="#{r.preco}" />
+					</p:column>
+
+					<p:column headerText="AÇÕES" width="40" style="text-align: center">
+
+						<h:commandButton value="Excluir"
+							onclick="return confirm('Confirma a exclusão?')"
+							action="#{ReceitaBean.excluir(r)}" update="@form" />
+
+						<p:outputLabel> / </p:outputLabel>
+
+						<h:commandButton value="Editar"
+							action="#{ReceitaBean.prepararEditar}">
+
+							<f:setPropertyActionListener
+								target="#{ReceitaBean.codigoReceitaEditar}" value="#{r.codigo}" />
+						</h:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:tab>
+
+			<!-- TAB DE INSERIR RECEITA -->
+			<p:tab title="Inserir Receita">
+				<p:panelGrid style="width:1200px; ">
+					<p:row>
+						<p:column>
+
+							<!-- NOME DO CHEF -->
+							<p:outputLabel value="" />
+							<p:outputLabel value="Nome do Chef: " />
+							<p:inputText value="#{ReceitaBean.chef.nome}"
+								style="text-transform:uppercase" size="52" disabled="true" />
+
+							<!-- CPF DO CHEF -->
+							<p:outputLabel value=" " />
+							<p:outputLabel value="CPF: " />
+							<p:inputMask size="11" value="#{ReceitaBean.chef.cpf}"
+								mask="999.999.999-99" disabled="true" />
+
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<!-- NOME DA RECEITA -->
+							<p:outputLabel value="" />
+							<p:outputLabel value="Nome da Receita: " />
+							<p:inputText value="#{ReceitaInserirBean.receita.nome}"
+								style="text-transform:uppercase" size="52" />
+
+							<!-- PREÇO DA RECEITA -->
+							<p:outputLabel value="Preço da receita: " />
+							<p:inputText size="4"
+								value="#{ReceitaInserirBean.receita.preco}" />
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<h3>Modo de preparo:</h3>
+							<p:inputTextarea rows="10" cols="50" counter="display"
+								maxlength="1000" counterTemplate="{0} caractéres restantes."
+								autoResize="false" value="#{ReceitaInserirBean.receita.modoPreparo}"  style="text-transform:uppercase"/>
+							<br />
+							<h:outputText id="display" />
+
+							<p:panel header="Ingredientes">
+								<p:panelGrid columns="3">
+
+									<h:outputLabel value="Descrição do ingrediente: " />
+									<p:inputText size="70"
+										value="#{ReceitaInserirBean.ingrediente.descricao}" style="text-transform:uppercase"/>
+
+									<p:commandButton value="Adicionar" update="ingredientes"
+										actionListener="#{ReceitaInserirBean.adicionarIngredientes}" />
+								</p:panelGrid>
+								<p:dataTable id="ingredientes" var="ingrediente" rows="5"
+									paginator="true"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} 
+									{NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									value="#{ReceitaInserirBean.receita.ingredientes}">
+
+									<p:column headerText="Ingrediente" style="text-align: center">
+										<h:outputText value="#{ingrediente.descricao}" />
+									</p:column>
+
+									<p:column headerText="Ação" style="text-align: center">
+										<h:commandButton value="Excluir"
+											action="#{ReceitaInserirBean.excluirIngrediente(ingrediente)}"
+											update="@form" />
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+
+							<p:commandButton value="Salvar" update="@form"
+								action="#{ReceitaInserirBean.salvar}" />
+							<p:button value="" disabled="true" />
+
+							<p:commandButton value="Limpar" update="@form"
+								action="#{ReceitaInserirBean.limparCampos}" />
+
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:tab>
+		</p:tabView>
+	</ui:define>
+</ui:composition>
+</html>
