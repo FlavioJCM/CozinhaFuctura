@@ -96,8 +96,6 @@ public class LoginBean {
 	
 	public String sairLogin() {
 		isLogado = false;
-		FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("LoginBean", new LoginBean());
-		FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("ChefBean", new ChefBean());
 		return telaLogin;
 	}
 
