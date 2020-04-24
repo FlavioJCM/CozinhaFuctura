@@ -6,6 +6,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import dao.ChefDAOImpl;
+import dao.GenericoDAO;
 import entidade.Chef;
 import entidade.Receita;
 import exceptions.CampoInvalidoException;
@@ -18,6 +19,8 @@ public class ChefBean {
 	
 	private Chef chef;
 	private String senhaConfirmar;
+	private GenericoDAO<Chef> daoChef = null;
+	
 	private static final String telaLogin = "/paginas/TelaLogin.xhtml";
 	
 	public static Chef chefLogado;
@@ -38,23 +41,22 @@ public class ChefBean {
 		this.senhaConfirmar = senhaConfirmar;
 	}
 
-	public ChefBean() {
-		limparCampos();
-	}
-	
-	//método para inserir o chef na tela cadastro
-	public void inserir() {
-		ChefDAOImpl dao = null;
+	public ChefBean() {		
 		try {
-			dao = new ChefDAOImpl(JpaUtil.getEntityManager());
+			this.daoChef = new ChefDAOImpl(JpaUtil.getEntityManager());
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_WARN, "", e.toString()));
 			return;
 		}	
+		limparCampos();
+	}
+	
+	//método para inserir o chef na tela cadastro
+	public void inserir() {	
 		
 		try {
-			if(dao.pesquisarPorID(chef) != null) {
+			if(this.daoChef.pesquisarPorID(chef) != null) {
 				throw new JaCadastradoException("chef");
 			}
 			
@@ -74,7 +76,7 @@ public class ChefBean {
 				return;
 			}
 			
-			dao.inserir(chef);
+			this.daoChef.inserir(chef);
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Usuário salvo!"));
 			limparCampos();
@@ -93,14 +95,7 @@ public class ChefBean {
 	
 	//editar o chef
 	public void editar() {
-		ChefDAOImpl dao = null;
-		try {
-			dao = new ChefDAOImpl(JpaUtil.getEntityManager());
-		} catch (Exception e) {
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_WARN, "", e.toString()));
-			return;
-		}	
+		
 		this.chef = LoginBean.chefLogado;
 		try {			
 			
@@ -118,7 +113,7 @@ public class ChefBean {
 						new FacesMessage(FacesMessage.SEVERITY_WARN, "", "Senhas incompatíveis!"));
 				return;
 			}
-			dao.alterar(chef);
+			this.daoChef.alterar(chef);
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Usuário alterar!"));
 			limparCampos();
@@ -131,21 +126,12 @@ public class ChefBean {
 	}
 	
 	
-	public String excluir() {
-		
-		ChefDAOImpl dao = null;
-		try {
-			dao = new ChefDAOImpl(JpaUtil.getEntityManager());
-		} catch (Exception e) {
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_WARN, "", e.toString()));		
-			return null;
-		}	
+	public String excluir() {		
 		
 		chef = LoginBean.chefLogado;
 		
 		try {
-			dao.remover(chef);
+			this.daoChef.remover(chef);
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_WARN, "", e.toString()));	

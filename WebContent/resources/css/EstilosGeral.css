@@ -1,0 +1,31 @@
+@charset "ISO-8859-1";
+
+img {
+	float: left;
+}
+
+h1 {
+	color: green;
+}
+
+.container {
+	clear: both;
+}
+
+.title {
+	padding: 0 90px;
+}
+
+label {
+	font-weight: bold;
+}
+
+.outputLabelCss{
+	color: red;
+	font-weight: bold;
+}
+
+.senhaCss{
+	color: green;
+	font-weight: bold;
+}

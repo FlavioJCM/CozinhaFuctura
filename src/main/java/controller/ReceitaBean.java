@@ -9,6 +9,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+
+import dao.GenericoDAO;
+import dao.IngredienteDAO;
+import dao.IngredienteDAOImpl;
 import dao.ReceitaDAOImpl;
 import entidade.Chef;
 import entidade.Ingrediente;
@@ -25,7 +29,8 @@ public class ReceitaBean {
 	private Receita receitaInserir;
 	private Chef chef;
 	private List<Receita> listaReceitas;
-	private ReceitaDAOImpl receitaDAO;
+	private GenericoDAO<Receita> receitaDAO;
+	private IngredienteDAO ingredienteDAO;
 	private Ingrediente ingrediente;
 	private Ingrediente ingredienteEditar;
 	private Receita receitaEditar;	
@@ -45,6 +50,7 @@ public class ReceitaBean {
 	public void init() {
 		try {
 			this.receitaDAO = new ReceitaDAOImpl(JpaUtil.getEntityManager());
+			this.ingredienteDAO = new IngredienteDAOImpl(JpaUtil.getEntityManager());
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Erro! " + e.toString()));
@@ -63,7 +69,7 @@ public class ReceitaBean {
 		
 		try {
 			codigoNaoEditavel = codigoReceitaEditar;
-			receitaEditar = receitaDAO.pesquisarPorID(r);
+			receitaEditar = this.receitaDAO.pesquisarPorID(r);
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", e.getMessage()));
@@ -79,7 +85,7 @@ public class ReceitaBean {
 			receita.setNome(receita.getNome().toUpperCase());
 		}
 		try {
-			this.listaReceitas = receitaDAO.listarPersonalizado(receita);
+			this.listaReceitas = this.receitaDAO.listarPersonalizado(receita);
 			System.out.println();
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null,
@@ -91,7 +97,7 @@ public class ReceitaBean {
 	//excluir receitas
 	public void excluir(Receita receita) {
 		try {
-			receitaDAO.remover(receita);
+			this.receitaDAO.remover(receita);
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Erro! " + e.toString()));
@@ -244,10 +250,12 @@ public class ReceitaBean {
 			receitaEditar.setChef(chef);
 			receitaEditar.setNome(receitaEditar.getNome().toUpperCase());
 			receitaEditar.setModoPreparo(receitaEditar.getModoPreparo().toUpperCase());
-			receitaDAO.alterar(receitaEditar);
+			this.receitaDAO.alterar(receitaEditar);
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Receita alterada!"));
-			receitaDAO.removerIngrediente(ingredientesRemovidos);
+			
+			
+			this.ingredienteDAO.removerIngrediente(ingredientesRemovidos);
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_WARN, "", e.toString()));

@@ -126,15 +126,4 @@ public class ReceitaDAOImpl implements GenericoDAO<Receita> {
 		return jpql;
 	}	
 	
-	public void removerIngrediente(List<Ingrediente> ingredientes) {		
-		
-		EntityTransaction tx = ent.getTransaction();
-		tx.begin();
-		
-		for (int i = 0; i < ingredientes.size(); i++) {			
-			ent.remove(ent.find(Ingrediente.class, ingredientes.get(i).getCodigo()));
-		}		
-		tx.commit();
-	}
-
 }

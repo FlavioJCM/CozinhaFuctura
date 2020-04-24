@@ -6,6 +6,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
+
+import dao.GenericoDAO;
 import dao.ReceitaDAOImpl;
 import entidade.Chef;
 import entidade.Ingrediente;
@@ -18,7 +20,7 @@ public class FeedReceitaBean {
 	private Chef chef;
 	private Receita receita;
 	private List<Receita> receitas;
-	private ReceitaDAOImpl receitaDAO;
+	private GenericoDAO<Receita> receitaDAO;
 	
 	public Chef getChef() {
 		return chef;
@@ -44,7 +46,7 @@ public class FeedReceitaBean {
 			this.receitaDAO = new ReceitaDAOImpl(JpaUtil.getEntityManager());
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Erro! " + e.toString()));
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.toString()));
 			return;
 		}
 		listarTodos();
@@ -58,7 +60,7 @@ public class FeedReceitaBean {
 		receita.getChef().setNome(chef.getNome());
 		receita.setNome(receita.getNome().toUpperCase());
 		try {
-			this.receitas = receitaDAO.listarPersonalizado(receita);
+			this.receitas = this.receitaDAO.listarPersonalizado(receita);
 			System.out.println();
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null,
@@ -69,7 +71,7 @@ public class FeedReceitaBean {
 	
 	public void listarTodos() {
 		try {
-			this.receitas = receitaDAO.listarTodos();
+			this.receitas = this.receitaDAO.listarTodos();
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_WARN, "", "Atenção! " + e.toString()));

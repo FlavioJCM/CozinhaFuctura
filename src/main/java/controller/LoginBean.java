@@ -6,6 +6,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import dao.ChefDAOImpl;
+import dao.GenericoDAO;
 import entidade.Chef;
 import exceptions.NaoCadastradoException;
 import exceptions.SenhaException;
@@ -17,6 +18,7 @@ public class LoginBean {
 
 	private static boolean isLogado = false;
 	private Chef chef;
+	private GenericoDAO<Chef> chefDAO;
 
 	private static final String telaPrincipal = "/templatePrincipal.xhtml";
 	private static final String telaLogin = "/paginas/TelaLogin.xhtml";
@@ -36,28 +38,28 @@ public class LoginBean {
 	public void init() {
 		this.chef = new Chef();
 		this.chef.setCpf("111.111.111-11");
+		try {
+			//cria o dao de chef	
+			this.chefDAO = new ChefDAOImpl(JpaUtil.getEntityManager());
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Erro! " + e.toString()));
+			return;
+		}
 	}
 
 	public String logar() {
 		isLogado = false;
 		
-		//cria o dao de chef
-		ChefDAOImpl chefDAO = null;
-		try {
-			chefDAO = new ChefDAOImpl(JpaUtil.getEntityManager());
-		} catch (Exception e1) {
-			System.out.println(e1.toString());
-		}
-
 		try {
 			if (!chef.getCpf().isEmpty()) {
 
-				Chef x = chefDAO.pesquisarPorID(chef);
+				Chef x = this.chefDAO.pesquisarPorID(chef);
 
 				if (x == null) {
 					throw new NaoCadastradoException("chef");
 				}
-
+ 
 				if (!x.getSenha().equals(chef.getSenha())) {
 					throw new SenhaException("senhaInvalida");
 				}
@@ -75,7 +77,7 @@ public class LoginBean {
 		//se passar nos critérios, entra aqui e vai pra tela principal
 		if (isLogado) {
 			try {
-				chefLogado = chefDAO.pesquisarPorID(chef);
+				chefLogado = this.chefDAO.pesquisarPorID(chef);
 			} catch (Exception e) {
 				FacesContext.getCurrentInstance().addMessage(null,
 						new FacesMessage(FacesMessage.SEVERITY_WARN, "", "Atenção! " + e.toString()));

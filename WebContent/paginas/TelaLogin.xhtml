@@ -13,9 +13,12 @@
 
 	<ui:define name="menu">
 
+		<h:outputStylesheet library="css" name="EstilosGeral.css" />
+
 		<p:messages id="messages" showDetail="true" closable="true">
 			<p:autoUpdate />
 		</p:messages>
+		
 
 		<p:panelGrid style="width:100px;">
 			<h1></h1>
@@ -57,7 +60,7 @@
 		<p:panelGrid>		
 			<p:row>
 				<!-- Senha login -->
-				<p:outputLabel value="Não é cadastrado?" />
+				<p:outputLabel styleClass="outputLabelCss" value="Não é cadastrado?" />
 			</p:row>
 		</p:panelGrid>
 		<p:commandButton value="Cadastre-se" action="#{LoginBean.irParaCadastroChef}"
